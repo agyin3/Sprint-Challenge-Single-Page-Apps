@@ -42,9 +42,28 @@ export default function CharacterList() {
 
   const [characters, setCharacters] = useState([]);
 
-  const [page, setPage] = useState('https://rickandmortyapi.com/api/character/');
-
   const [query, setQuery] = useState("");
+
+  const [page, setPage] = useState(`https://rickandmortyapi.com/api/character/?page=1`);
+
+  useEffect(() => {
+    // TODO: Add API Request here - must run in `useEffect`
+    //  Important: verify the 2nd `useEffect` parameter: the dependancies array!
+
+    async function fetchData() {
+      try {
+        const charactersData = await axios.get(`${page}&name=${query}`);
+        console.log(charactersData)
+        setCharacters(charactersData.data)
+      }
+      catch(err) {
+        console.log(err)
+      }
+    }
+
+    fetchData()
+
+  }, [query]);
 
   useEffect(() => {
     // TODO: Add API Request here - must run in `useEffect`
@@ -62,7 +81,6 @@ export default function CharacterList() {
     }
 
     fetchData()
-    console.log(`Characters: ${characters.results}`)
 
   }, [page]);
 
@@ -75,21 +93,22 @@ export default function CharacterList() {
   }
 
   const handleChange = e => {
-    setQuery(e.target.value);
-    filterArray();
+    setPage(`https://rickandmortyapi.com/api/character/?page=1&name=${e.target.value}`)
+    // filterArray();
   }
 
-  const filterArray = () => {
-    let searchString = query;
-    let nameArray = characters.results.map(index => index)
-    console.log(nameArray);
+  // async function filterArray() {
+  //   let searchString = query;
+  //   let nameArray = characters.results.map(index => index)
+  //   console.log(nameArray);
 
-    if(searchString.length > 0) {
-      nameArray = nameArray.filter(l => {
-        setCharacters(l.results.name.toLowerCase().match(searchString));
-      })
-    }
-  }
+  //   if(searchString.length > 0) {
+  //     nameArray = nameArray.filter(l => {
+  //      console.log(l.results.name.toLowerCase().match(searchString));
+  //      setCharacters(nameArray);
+  //     })
+  //   }
+  // }
 
   return (
     <section className="characters-list">
